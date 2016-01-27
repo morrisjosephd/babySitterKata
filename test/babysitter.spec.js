@@ -56,7 +56,23 @@ describe('A babysitter', function() {
 
     assert.equal(16, results);
   });
-  it('should be paid $28 for 1 hour awake before midnight and 1 hour after midnight');
-  it('should be paid $24 for 1 hour in bed and 1 hour after midnight');
+
+  it('should be paid $28 for 1 hour awake before midnight and 1 hour after midnight', function() {
+    var startTime = setTime(11);
+    var endTime = setTime(1);
+    var bedTime = setTime(12);
+    var results = sitter.babysitter(startTime, endTime, bedTime);
+
+    assert.equal(28, results);
+  });
+
+  it('should be paid $24 for 1 hour in bed and 1 hour after midnight', function() {
+    var startTime = setTime(11);
+    var endTime = setTime(1);
+    var bedTime = setTime(11);
+    var results = sitter.babysitter(startTime, endTime, bedTime);
+
+    assert.equal(20, results);
+  });
 
 });
