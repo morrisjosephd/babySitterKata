@@ -1,43 +1,33 @@
-var babysitter = function (begin, end, bed) {
+const AWAKE_BILLING = 12;
+const ASLEEP_BILLING = 8;
+const AFTER_MIDNIGHT_BILLING = 16;
 
-  var startTime = begin.getHours();
-  var endTime = end.getHours();
-  var bedTime = bed.getHours();
+module.exports = function (begin, end, bed) {
 
-  var awakeBilling = getAwakeBilling(startTime, endTime, bedTime);
-  var bedBilling = getBedBilling(endTime, bedTime);
-  var afterMidnightBilling = getAfterMidnightBilling(endTime);
+  var startTime = transformHours(begin.getHours());
+  var endTime = transformHours(end.getHours());
+  var bedTime = transformHours(bed.getHours());
 
+  var pay = 0;
 
-  return awakeBilling + bedBilling + afterMidnightBilling;
+  for (var i = startTime; i < endTime; i++) {
+    pay += findRate(i, bedTime);
+  }
+
+  return pay;
 };
 
-function getAwakeBilling(startTime, endTime, bedTime) {
-  if (bedTime < 5) {
-    return 0;
-  }
-  if (bedTime > endTime && bedTime != 12) {
-    return (endTime - startTime) * 12;
+function findRate (hour, bedTime) {
+  if (hour < 12 && hour < bedTime) {
+    return AWAKE_BILLING;
+  } else if (hour < 12 && bedTime <= hour) {
+    return ASLEEP_BILLING
   } else {
-    return (bedTime - startTime) * 12;
-  }
-
-}
-
-function getBedBilling(endTime, bedTime) {
-  if (endTime <=12 && endTime > bedTime) {
-    return (endTime - bedTime) * 8;
-  } else {
-    return 0;
+    return AFTER_MIDNIGHT_BILLING;
   }
 }
 
-function getAfterMidnightBilling(endTime) {
-  if (endTime < 5) {
-    return endTime * 16;
-  } else {
-    return 0;
-  }
+function transformHours (time) {
+  return time < 5 ? time + 12 : time;
 }
 
-module.exports.babysitter = babysitter;
